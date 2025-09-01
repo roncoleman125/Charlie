@@ -59,6 +59,13 @@
             <artifactId>swing-layout</artifactId>
             <version>1.0.3</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.scalatestplus/junit-4-13 -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.1</version>
+        </dependency>
     </dependencies>
     <name>Charlie</name>
 </project>
