@@ -53,7 +53,7 @@ public class GameServer {
         new GameServer().go();
     }
     
-    protected void go() {
+    public void go() {
         try {
             // Override default log file name in log4j.properties.
             System.getProperties().setProperty("LOGFILE","log-server.out");

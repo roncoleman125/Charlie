@@ -20,9 +20,7 @@ import charlie.card.Hid;
 import charlie.dealer.Seat;
 import charlie.plugin.IUi;
 import charlie.server.Ticket;
-import org.junit.Test;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
@@ -36,8 +34,10 @@ public class StayTest extends AbstractTestCase implements IUi {
     boolean gameOver = false;
     boolean bj = false;
 
-    @Test
-    public void test() throws IOException, InterruptedException {
+    /**
+     * Runs the test.
+     */
+    public void test() throws Exception {
         // Load charlie.props into the system properties.
         Properties props = System.getProperties();
         props.load(new FileInputStream("charlie.props"));

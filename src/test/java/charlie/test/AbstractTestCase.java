@@ -11,6 +11,7 @@
  */
 package charlie.test;
 
+import charlie.server.GameServer;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 
@@ -35,5 +36,31 @@ public abstract class AbstractTestCase extends TestCase {
      */
     public void error(String text) {
         LOG.error(this.getClass().getSimpleName()+" "+text);
+    }
+
+    /**
+     * Sleeps as a convenience method.
+     * @param millis Sleep-time in milliseconds.
+     */
+    public void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        }
+        catch(Exception ignored) {
+
+        }
+    }
+
+    /**
+     * Launches the server.
+     */
+    public void go() {
+        new Thread(() -> {
+            GameServer server = new GameServer();
+            server.go();
+        }).start();
+
+        // Wait for server to start properly
+        sleep(500);
     }
 }
