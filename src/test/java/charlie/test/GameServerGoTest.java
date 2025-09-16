@@ -16,27 +16,30 @@ import charlie.server.GameServer;
 import org.junit.Test;
 
 /**
- * This class test starting the server to interact with a robot test.
- * We must extend thread and use the @Test annotation, otherwise JUnit
- * won't be happy.
+ * This class tests starting the server to interact with a robot test.
+ * We extend thread and use the @Test annotation, otherwise JUnit won't be happy.
  * @author Ron.Coleman
  */
 public class GameServerGoTest extends Thread {
-    //
+    /**
+     * Runs the test.
+     */
     @Test
     public void test() throws InterruptedException {
         // Launch the server in background
         new Thread(this).start();
 
+        // Wait to give a chance to manually run a test.
         Thread.sleep(30000);
+
+        // Expect server to stop when this (main?) thread ends.
     }
 
     /**
-     * Runs the game server in the background.
+     * Enters here when thread starts to run game server in the background.
      */
     @Override
     public void run() {
-        GameServer server = new GameServer();
-        server.go();
+        new GameServer().go();
     }
 }
