@@ -52,12 +52,11 @@ public abstract class AbstractTestCase extends TestCase {
     }
 
     /**
-     * Launches the server.
+     * Launches the game server.
      */
     public void go() {
         new Thread(() -> {
-            GameServer server = new GameServer();
-            server.go();
+            new GameServer().go();
         }).start();
 
         // Wait for server to start properly

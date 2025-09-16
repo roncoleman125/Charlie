@@ -52,7 +52,10 @@ public class GameServer {
     public static void main(String[] args) {
         new GameServer().go();
     }
-    
+
+    /**
+     * Runs the server loop.
+     */
     public void go() {
         try {
             // Override default log file name in log4j.properties.
