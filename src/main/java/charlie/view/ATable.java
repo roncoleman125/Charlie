@@ -560,7 +560,7 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
 
         hand.setOutcome(AHand.Outcome.Push);
         
-        // Play puch sound only once
+        // Play push sound only once
         if(hid.getSeat() != Seat.DEALER && pushes == 0) {
             ++pushes;
             SoundFactory.play(Effect.PUSH);
