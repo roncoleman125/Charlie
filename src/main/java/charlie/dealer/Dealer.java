@@ -362,9 +362,9 @@ public class Dealer implements Serializable {
                 
                 // If player has blackjack -- they win automatically!
                 if (hand.isBlackjack()) {
-                    hid.multiplyAmt(BLACKJACK_PAYS);
+//                    hid.multiplyAmt(BLACKJACK_PAYS);
 
-                    updateBankroll(hid,PROFIT);
+                    updateBankroll(hid,BLACKJACK_PAYS);
 
                     for (IPlayer player_ : playerSequence) {
                         player_.blackjack(hid);
@@ -416,9 +416,9 @@ public class Dealer implements Serializable {
         }
         // If hand got a Charlie or Blackjack, we're done with this hand
         else if(hand.isCharlie()) {
-            hid.multiplyAmt(CHARLIE_PAYS);
+//            hid.multiplyAmt(CHARLIE_PAYS);
             
-            updateBankroll(hid,PROFIT);
+            updateBankroll(hid,CHARLIE_PAYS);
             
             // Tell everyone what happened
             for (IPlayer _player : playerSequence)
@@ -752,8 +752,12 @@ public class Dealer implements Serializable {
      */
     protected void updateBankroll(Hid hid,double gain) {
         applySideBet(hid);
+
+        // Update the P&L.
+        double pl = hid.getAmt() * gain;
+        hid.setAmt(pl);
         
-        house.updateBankroll(players.get(hid), hid, gain);      
+        house.updateBankroll(players.get(hid), hid);
     }
     
     /**

@@ -251,31 +251,35 @@ public class AMoneyManager {
         this.wager.setAmt(this.wager.getAmt()-value);
         this.splitChips.clear();
     }
-    
-    
+
     /**
-     * Increases bankroll from a win.
+     * Updates the bankroll.
      * @param amt Amount
      */
-    public void increase(Double amt) {
-        bankroll.increase(amt);
-    }
+    public void update(Double amt) { bankroll.update(amt); }
+//    /**
+//     * Increases bankroll from a win.
+//     * @param amt Amount
+//     */
+//    public void increase(Double amt) {
+//        bankroll.increase(amt);
+//    }
     
-    /**
-     * Increases bankroll with a chip earning.
-     * @param chip Chip
-     */
-    public void increase(Chip chip) {
-        wager.increase(chip.getAmt());
-    }
+//    /**
+//     * Increases bankroll with a chip earning.
+//     * @param chip Chip
+//     */
+//    public void increase(Chip chip) {
+//        wager.increase(chip.getAmt());
+//    }
     
-    /**
-     * Decreases bankroll from a loss.
-     * @param amt Amount
-     */
-    public void decrease(Double amt) {
-        bankroll.decrease(amt);
-    }    
+//    /**
+//     * Decreases bankroll from a loss.
+//     * @param amt Amount
+//     */
+//    public void decrease(Double amt) {
+//        bankroll.decrease(amt);
+//    }
 
     /**
      * Gets the bankroll.
