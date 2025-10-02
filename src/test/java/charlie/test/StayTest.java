@@ -39,6 +39,8 @@ public class StayTest extends AbstractTestCase implements IUi {
      * Runs the test.
      */
     public void test() throws Exception {
+        go();
+
         // Authentication looks for these properties
         Properties props = System.getProperties();
         props.load(new FileInputStream("charlie.props"));
