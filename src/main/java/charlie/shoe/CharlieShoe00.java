@@ -15,9 +15,8 @@ package charlie.shoe;
 import charlie.card.Card;
 
 /**
- * This class...
- *
- * @author ronnc
+ * This class creates a shoe to test the charlie behavior.
+ * @author Ron.Coleman
  */
 public class CharlieShoe00 extends Shoe {
     @Override

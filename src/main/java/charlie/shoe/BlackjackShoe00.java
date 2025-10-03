@@ -15,15 +15,15 @@ package charlie.shoe;
 import charlie.card.Card;
 
 /**
- * This class...
- *
- * @author ronnc
+ * This class creates a shoe to test the blackjack behavior.
+ * @author Ron.Coleman
  */
 public class BlackjackShoe00 extends Shoe {
     @Override
     public void init() {
         cards.clear();
 
+        // GAME 1
         // YOU
         cards.add(new Card(Card.ACE, Card.Suit.SPADES));
 
@@ -35,5 +35,24 @@ public class BlackjackShoe00 extends Shoe {
 
         // DEALER
         cards.add(new Card(6, Card.Suit.CLUBS));
+
+        // GAME 2
+        // YOU
+        cards.add(new Card(2, Card.Suit.SPADES));
+
+        // DEALER
+        cards.add(new Card(Card.QUEEN, Card.Suit.HEARTS));
+
+        // YOU
+        cards.add(new Card(3, Card.Suit.HEARTS));
+
+        // DEALER
+        cards.add(new Card(6, Card.Suit.CLUBS));
+
+        // YOU
+        cards.add(new Card(10, Card.Suit.HEARTS));
+
+        // DEALER
+        cards.add(new Card(5, Card.Suit.HEARTS));
     }
 }
