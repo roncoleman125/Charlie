@@ -235,10 +235,10 @@ public class AMoneyManager {
             chip.setX(xPoint);
             chip.setY(yPoint);
                 
-            // add chip to the "split chips" stack
+            // request chip to the "split chips" stack
             this.splitChips.add(chip);
             
-            // add the wager to the table.
+            // request the wager to the table.
             this.wager.increase(chip.getAmt());
         }
     }
@@ -338,7 +338,7 @@ public class AMoneyManager {
 //                
 //                Chip chip = new Chip(button.getImage(),placeX,placeY,amounts[i]);
 //                
-//                chips.add(chip);
+//                chips.request(chip);
 //                
 //                wager.increase(amounts[i]);
 //                

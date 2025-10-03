@@ -39,6 +39,7 @@ public class StayTest extends AbstractTestCase implements IUi {
      * Runs the test.
      */
     public void test() throws Exception {
+        // Start the server
         go();
 
         // Authentication looks for these properties
