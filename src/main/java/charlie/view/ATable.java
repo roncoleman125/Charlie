@@ -358,7 +358,7 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
      * @param hid Hand id
      */
     @Override
-    public void turn(final Hid hid) {
+    public void play(final Hid hid) {
         AHand hand = manos.get(hid);
 
         if (hid.getSeat() == Seat.DEALER) {
@@ -465,6 +465,14 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
                 }
             }).start();
         }
+    }
+
+    /**
+     * Handles insurance requests.
+     */
+    @Override
+    public void insure() {
+
     }
 
     /**
@@ -639,7 +647,7 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
      * @param hids Hand ids in this game
      */
     @Override
-    public void starting(List<Hid> hids, final int shoeSize) {       
+    public void startGame(List<Hid> hids, final int shoeSize) {
         numHands = hids.size();
 
         this.shoeSize = shoeSize;
@@ -673,7 +681,7 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
      * @param shoeSize Shoe size
      */
     @Override
-    public void ending(final int shoeSize) {
+    public void endGame(final int shoeSize) {
         LOG.info("num hands = "+numHands+" wins = "+wins+" loses = "+loses+" pushes = "+pushes);
         
         // Game now over

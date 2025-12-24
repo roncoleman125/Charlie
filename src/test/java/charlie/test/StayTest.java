@@ -108,7 +108,7 @@ public class StayTest extends BrainO implements IUi {
      * @param hid New hand's turn
      */
     @Override
-    public void turn(Hid hid) {
+    public void play(Hid hid) {
         if(hid.getSeat() == Seat.YOU)
             new Thread(() -> courier.stay(you)).start();
     }
@@ -174,7 +174,7 @@ public class StayTest extends BrainO implements IUi {
      * @param shoeSize Current shoe size, ie, original shoe less cards dealt
      */
     @Override
-    public void starting(List<Hid> hids, int shoeSize) {
+    public void startGame(List<Hid> hids, int shoeSize) {
         StringBuilder buffer = new StringBuilder();
 
         buffer.append("game STARTING: ");
@@ -193,7 +193,7 @@ public class StayTest extends BrainO implements IUi {
      * @param shoeSize Endind shoe size
      */
     @Override
-    public void ending(int shoeSize) {
+    public void endGame(int shoeSize) {
         synchronized(gameOver) {
             gameOver.notify();
         }
@@ -232,5 +232,12 @@ public class StayTest extends BrainO implements IUi {
     public void split(Hid newHid, Hid origHid) {
         // Not possible for this test case.
         assert false;
+    }
+
+    /**
+     * Handles insurance requests.
+     */
+    @Override
+    public void insure() {
     }
 }
