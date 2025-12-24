@@ -19,7 +19,7 @@ import org.apache.log4j.Logger;
  * This class is the starting framework for testing Charlie.
  * @author Ron.Coleman
  */
-public abstract class AbstractTestCase extends TestCase {
+public abstract class BrainO extends TestCase {
     public Logger LOG = Logger.getLogger(this.getClass());
 
     /**

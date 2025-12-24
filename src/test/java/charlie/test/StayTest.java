@@ -30,7 +30,7 @@ import java.util.Properties;
  * This class is a  demo of a simple but plausible unit test case of STAY logic.
  * @author Ron.Coleman
  */
-public class StayTest extends AbstractTestCase implements IUi {
+public class StayTest extends BrainO implements IUi {
     Hid you;
     final Boolean gameOver = false;
     Courier courier = null;
