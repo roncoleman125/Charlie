@@ -1,0 +1,106 @@
+/*
+ * Copyright (c) Ron Coleman
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+package charlie.test;
+
+import charlie.actor.Arriver;
+import charlie.actor.ClientAuthenticator;
+import charlie.actor.Courier;
+import charlie.plugin.IUi;
+import charlie.server.GameServer;
+import charlie.server.Ticket;
+import junit.framework.TestCase;
+import org.apache.log4j.Logger;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.Properties;
+
+/**
+ * This class is the base testing framework.
+ * @author Ron.Coleman
+ */
+public abstract class Perfect extends TestCase {
+    Logger LOG = Logger.getLogger(this.getClass());
+    Courier courier = null;
+
+    /**
+     *
+     * Logs diagnostics conveniently.
+     * @param text Text of message.
+     */
+    public void info(String text) {
+        LOG.info(this.getClass().getSimpleName()+" "+text);
+    }
+
+    /**
+     * Logs error diagnostics conveniently.
+     * @param text Text of message.
+     */
+    public void error(String text) {
+        LOG.error(this.getClass().getSimpleName()+" "+text);
+    }
+
+    /**
+     * Sleeps as a convenience method.
+     * @param millis Sleep-time in milliseconds.
+     */
+    public void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        }
+        catch(Exception ignored) {
+
+        }
+    }
+
+    /**
+     * Launches the game server and logs in.
+     */
+    public void go(IUi ui) throws Exception {
+        // Start server as a worker thread.
+        new Thread(() -> {
+            new GameServer().go();
+        }).start();
+
+        // Wait for server to start properly
+        sleep(500);
+
+        // Authentication looks for these properties
+        Properties props = System.getProperties();
+        props.load(new FileInputStream("charlie.props"));
+
+        // Connect to game server securely.
+        ClientAuthenticator authenticator = new ClientAuthenticator();
+
+        // The ticket is needed for subsequent communication(s).
+        Ticket ticket = authenticator.send("perfect","123");
+        info("connecting to server");
+
+        // Start the courier which communicates over sockets with the server.
+        courier = new Courier(ui);
+
+        courier.start();
+        info("courier started");
+
+        // Tell the game server we've arrived.
+        new Arriver(ticket).send();
+        info("we ARRIVED!");
+
+        // Game server will be ready when it notifies us, see Courier.got(:Ready).
+        synchronized (this) {
+            info("waiting for server READY...");
+            this.wait();
+        }
+
+        info("server READY !");
+    }
+}

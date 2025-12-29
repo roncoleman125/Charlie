@@ -30,48 +30,16 @@ import java.util.Properties;
  * This class is a  demo of a simple but plausible unit test case of STAY logic.
  * @author Ron.Coleman
  */
-public class StayTest extends BrainO implements IUi {
+public class HelloPerfectTest extends Perfect implements IUi {
     Hid you;
     final Boolean gameOver = false;
-    Courier courier = null;
 
     /**
      * Runs the test.
      */
     public void test() throws Exception {
-        // Start the server
-        go();
-
-        // Authentication looks for these properties
-        Properties props = System.getProperties();
-        props.load(new FileInputStream("charlie.props"));
-
-        // Connect to game server securely.
-        ClientAuthenticator authenticator = new ClientAuthenticator();
-
-        Ticket ticket = authenticator.send("tester","123");
-        info("connecting to server");
-
-        // Start the courier which sends messages to & receive messages from the serve
-        // except only after we've arrived.
-        courier = new Courier(this);
-
-        courier.start();
-        info("courier started");
-
-        // Tell the game server we've arrived.
-        // Note: this is only used for arriving after which courier becomes the
-        // intermediary.
-        new Arriver(ticket).send();
-        info("we ARRIVED!");
-
-        // Game server will be ready when it notifies us; see Courier.got(:Ready).
-        synchronized (this) {
-            info("waiting for server READY...");
-            this.wait();
-        }
-
-        info("server READY !");
+        // Starts the server and logs in
+        go(this);
 
         // Now that the game server is ready, to start a game, we just need to
         // send in a bet which in the GUI is like pressing DEAL.
