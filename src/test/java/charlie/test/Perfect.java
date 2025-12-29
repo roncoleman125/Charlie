@@ -21,7 +21,6 @@ import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.Properties;
 
 /**
@@ -102,5 +101,38 @@ public abstract class Perfect extends TestCase {
         }
 
         info("server READY !");
+    }
+
+    final Object lock = new Object();
+    boolean trucking = true;
+
+    /**
+     * Awaits signal.
+     * @param timeout Time in millis to wait
+     * @return True if got signal, false if timed out
+     */
+    public boolean await(long timeout) throws InterruptedException {
+        long deadline = System.currentTimeMillis() + timeout;
+
+        synchronized (lock) {
+            while (trucking) {
+                long remaining = deadline - System.currentTimeMillis();
+                if (remaining <= 0) {
+                    return false;              // timed out
+                }
+                lock.wait(remaining);
+            }
+            return true;                       // condition became true
+        }
+    }
+
+    /**
+     * Signals awaiting thread(s).
+     */
+    public void signal() {
+        synchronized (lock) {
+            trucking = false;
+            lock.notifyAll();
+        }
     }
 }

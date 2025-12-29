@@ -25,7 +25,6 @@ import java.util.List;
  */
 public class HelloPerfectTest extends Perfect implements IUi {
     Hid you;
-    final Boolean gameOver = false;
 
     /**
      * Runs the test.
@@ -40,23 +39,14 @@ public class HelloPerfectTest extends Perfect implements IUi {
         final int SIDE_BET_AMT = 0;
 
         courier.bet(BET_AMT,SIDE_BET_AMT);
-
         info("bet amt: "+BET_AMT+", side bet: "+SIDE_BET_AMT);
 
+        ////////// All test logic at this point done by IUi implementation.
+
         // Wait for dealer to call end of game.
-        // If we don't do this, game server shows connection refused exception.
-        synchronized (gameOver) {
-            info("waiting ENDING...");
+        assert await(20000);
 
-            // Wait for endGame to signal gave is over -- see below.
-            gameOver.wait(20000);
-        }
-
-        ////////// Test logic, at this point, done by IUi implementation.
-
-        // If we get here without game not over, something went wrong!
-        assert gameOver;
-
+        // End of scope closes sockets which shuts down client and server.
         info("DONE !");
     }
 
@@ -168,9 +158,7 @@ public class HelloPerfectTest extends Perfect implements IUi {
      */
     @Override
     public void endGame(int shoeSize) {
-        synchronized(gameOver) {
-            gameOver.notify();
-        }
+       signal();
 
        info("ENDING game shoe size: "+shoeSize);
     }
@@ -191,7 +179,6 @@ public class HelloPerfectTest extends Perfect implements IUi {
      */
     @Override
     public void setCourier(Courier courier) {
-        assert false;
     }
 
     /**
