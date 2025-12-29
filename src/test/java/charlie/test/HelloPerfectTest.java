@@ -12,22 +12,15 @@
 
 package charlie.test;
 
-import charlie.actor.Arriver;
-import charlie.actor.ClientAuthenticator;
 import charlie.actor.Courier;
 import charlie.card.Card;
 import charlie.card.Hid;
 import charlie.dealer.Seat;
 import charlie.plugin.IUi;
-import charlie.server.Ticket;
-
-import java.io.FileInputStream;
 import java.util.List;
-import java.util.Properties;
-
 
 /**
- * This class is a  demo of a simple but plausible unit test case of STAY logic.
+ * This class is the base test case.
  * @author Ron.Coleman
  */
 public class HelloPerfectTest extends Perfect implements IUi {
@@ -54,8 +47,15 @@ public class HelloPerfectTest extends Perfect implements IUi {
         // If we don't do this, game server shows connection refused exception.
         synchronized (gameOver) {
             info("waiting ENDING...");
-            gameOver.wait();
+
+            // Wait for endGame to signal gave is over -- see below.
+            gameOver.wait(20000);
         }
+
+        ////////// Test logic, at this point, done by IUi implementation.
+
+        // If we get here without game not over, something went wrong!
+        assert gameOver;
 
         info("DONE !");
     }
@@ -77,6 +77,7 @@ public class HelloPerfectTest extends Perfect implements IUi {
      */
     @Override
     public void play(Hid hid) {
+        // When it's our turn, stand.
         if(hid.getSeat() == Seat.YOU)
             new Thread(() -> courier.stay(you)).start();
     }
@@ -87,6 +88,7 @@ public class HelloPerfectTest extends Perfect implements IUi {
      */
     @Override
     public void bust(Hid hid) {
+        // Possible if You or Dealer breaks but it will be one or the other.
         info("BREAK: "+hid);
     }
 
@@ -96,6 +98,7 @@ public class HelloPerfectTest extends Perfect implements IUi {
      */
     @Override
     public void win(Hid hid) {
+        // Possible if You or Dealer wins, but it'll be one or ther other.
         info("WIN: "+hid);
     }
 
@@ -105,6 +108,7 @@ public class HelloPerfectTest extends Perfect implements IUi {
      */
     @Override
     public void lose(Hid hid) {
+        // Possible if You or Dealer loses but it will be one or the other.
         info("LOSE: "+hid);
     }
 
@@ -114,6 +118,7 @@ public class HelloPerfectTest extends Perfect implements IUi {
      */
     @Override
     public void push(Hid hid) {
+        // Possible if there's a push.
         info("PUSH: "+hid);
     }
 
@@ -123,6 +128,7 @@ public class HelloPerfectTest extends Perfect implements IUi {
      */
     @Override
     public void blackjack(Hid hid) {
+        // Possible if either You or Dealer has a blackjack.
         info("BLACKJACK: "+hid);
     }
 
@@ -180,12 +186,12 @@ public class HelloPerfectTest extends Perfect implements IUi {
 
     /**
      * This method sets the courier.
-     * It's not used here because the test case instantiates a courier.
+     * It's not used here because the base test case instantiates a courier for us.
      * @param courier Courier
      */
     @Override
     public void setCourier(Courier courier) {
-
+        assert false;
     }
 
     /**
@@ -207,5 +213,7 @@ public class HelloPerfectTest extends Perfect implements IUi {
      */
     @Override
     public void insure() {
+        // Insurance not supported.
+        assert false;
     }
 }
