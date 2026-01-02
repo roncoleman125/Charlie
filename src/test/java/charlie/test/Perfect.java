@@ -103,6 +103,11 @@ public abstract class Perfect extends TestCase {
         info("server READY !");
     }
 
+    /**
+     * Not supported.
+     */
+    public void insure() { }
+
     final Object lock = new Object();
     boolean trucking = true;
 

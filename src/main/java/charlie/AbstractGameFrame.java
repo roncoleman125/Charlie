@@ -34,7 +34,6 @@ import charlie.util.Constant;
 import charlie.util.Play;
 import charlie.view.ATable;
 import org.apache.log4j.Logger;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,13 +44,10 @@ import java.util.List;
  * @author Ron.Coleman
  */
 public abstract class AbstractGameFrame extends javax.swing.JFrame {
-    protected static Logger LOG = null;//Logger.getLogger(AbstractGameFrame.class);;
-    protected final Integer MY_PORT = 2345;
+    protected static Logger LOG = null; //Logger.getLogger(AbstractGameFrame.class);;
     protected Courier courier;
     protected ATable table;
     protected boolean connected = false;
-    protected final String COURIER_ACTOR = "COURIER";
-    protected final String SOUND_EFFECTS_PROPERTY = "charlie.sounds.enabled";
     protected final List<Hid> hids = new ArrayList<>();
     protected final HashMap<Hid, Hand> hands = new HashMap<>();
     protected int handIndex = 0;
@@ -63,34 +59,26 @@ public abstract class AbstractGameFrame extends javax.swing.JFrame {
     protected boolean manuallyControlled = true;
 
     /**
-     * Is a hand "split-able
+     * Is a hand "split-able"
      * @author Dan Blossom
      */
     protected boolean splittable = false;
     public abstract void enableDeal(boolean state);
-
     public abstract void enablePlay(boolean state);
-
     public abstract void split(Hid newHid, Hid origHid);
-
     public abstract void updateHandIndex();
-
     public abstract void setDubblable(boolean state);
-
     public abstract void deal(Hid hid, Card card, int[] handValues);
-
     public abstract void enableSplitButton(Hid hid);
-
     protected abstract boolean isAdvisingConfirmed(Hid hid, Play play);
-
     protected abstract void loadConfig();
 
     /**
      * Connects to server
-     * @param panel Panel courier perceives.
+     * @param ui Panel courier perceives.
      * @return True if connected, false if connect attempt fails.
      */
-    protected boolean connect(ATable panel) {
+    protected boolean connect(ATable ui) {
         Ticket ticket = new ClientAuthenticator().send("abc", "def");
 
         if(ticket == null)
@@ -101,19 +89,19 @@ public abstract class AbstractGameFrame extends javax.swing.JFrame {
         // Start courier to receive messages from dealer --
         // NOTE: we must start courier before sending arrival message otherwise
         // ready message will come before any actor can receive it.
-        courier = new Courier(panel);
+        courier = new Courier(ui);
         courier.start();
 
-        // Let house know we've arrived then wait for READY to begin playing
+        // Let house know we've arrived then wait for READY signal from Courier.
         new Arriver(ticket).send();
 
-        synchronized (panel) {
+        synchronized (ui) {
             try {
-                panel.wait(5000);
+                ui.wait(5000);
 
                 Double bankroll = ticket.getBankroll();
 
-                panel.setBankroll(bankroll);
+                ui.setBankroll(bankroll);
 
                 LOG.info("connected to courier with bankroll = " + bankroll);
 
