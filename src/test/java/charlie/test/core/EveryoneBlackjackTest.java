@@ -10,34 +10,28 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package charlie.test;
+package charlie.test.core;
 
-import charlie.actor.Arriver;
-import charlie.actor.ClientAuthenticator;
 import charlie.actor.Courier;
 import charlie.card.Card;
 import charlie.card.Hid;
 import charlie.dealer.Seat;
 import charlie.plugin.IUi;
-import charlie.server.Ticket;
+import charlie.test.framework.Perfect;
 
-import java.io.FileInputStream;
 import java.util.List;
-import java.util.Properties;
 
 /**
- * This class is a demo of a simple but plausible unit test case of
- * neither user nor dealer getting Blackjack logic.
+ * This class is a  demo of a simple but plausible unit test case of
+ * User and Dealer Blackjack logic.
  * @author Elizabeth Herrera
  */
-public class NoBlackjackTest extends Perfect implements IUi {
+public class EveryoneBlackjackTest extends Perfect implements IUi {
     // Class-level bet constants + net tracker
     final int BET_AMT = 5;
     final int SIDE_BET_AMT = 0;
 
     Hid you;
-    final Boolean gameOver = false;
-    Courier courier = null;
     boolean bj = false;
 
     // Track total net winnings from YOU perspective
@@ -50,24 +44,6 @@ public class NoBlackjackTest extends Perfect implements IUi {
         // Start the server
         go(this);
 
-        // Load props
-        Properties props = System.getProperties();
-        props.load(new FileInputStream("NoBlackjack.props"));
-
-        // Connect to game server securely.
-        ClientAuthenticator authenticator = new ClientAuthenticator();
-        Ticket ticket = authenticator.send("tester","123");
-        info("connecting to server");
-
-        // Start the courier which sends messages to & receive messages from the server
-        courier = new Courier(this);
-        courier.start();
-        info("courier started");
-
-        // Tell the game server we've arrived.
-        new Arriver(ticket).send();
-        info("we ARRIVED!");
-
         // Wait for READY
         synchronized (this) {
             info("waiting for server READY...");
@@ -75,27 +51,17 @@ public class NoBlackjackTest extends Perfect implements IUi {
         }
         info("server READY !");
 
-        // Start game (neither should have BJ per props)
+        // Start game
         courier.bet(BET_AMT, SIDE_BET_AMT);
         info("bet amt: " + BET_AMT + ", side bet: " + SIDE_BET_AMT);
 
-        // If no BJ, we choose to stay (you also send stay again on turn; keeping your flow)
-        info("game over: " + gameOver);
-        if (!gameOver) {
-            courier.stay(you);
-            info("sent STAY");
-        } else {
-            assert bj : "YOU nor DEALER have Blackjack";
-            info("YOU or DEALER have a Blackjack");
-        }
-
-        // Wait for end
+        // End game cleanly.
         synchronized (this) {
             info("waiting ENDING...");
             this.wait();
         }
-
-        info("DONE !");
+        info("DONE!");
+        info("YOU and the DEALER have blackjack!");
     }
 
     /**
@@ -111,6 +77,7 @@ public class NoBlackjackTest extends Perfect implements IUi {
      */
     @Override
     public void play(Hid hid) {
+        // If it is not your turn, return
         if (hid.getSeat() != Seat.YOU)
             return;
 
@@ -161,11 +128,11 @@ public class NoBlackjackTest extends Perfect implements IUi {
     @Override
     public void push(Hid hid) {
         info("PUSH: " + hid + " (net change $0)");
-        assert false;
+        // no change to totalWinnings
     }
 
     /**
-     * Invoked for a (natural) Blackjack hand.
+     * Invoked for a (natural) Blackjack hand, Ace+10-value.
      */
     @Override
     public void blackjack(Hid hid) {
@@ -177,7 +144,6 @@ public class NoBlackjackTest extends Perfect implements IUi {
         } else if (hid.getSeat() == Seat.DEALER) {
             totalWinnings -= Math.abs(pl);
         }
-        assert false;
     }
 
     /**

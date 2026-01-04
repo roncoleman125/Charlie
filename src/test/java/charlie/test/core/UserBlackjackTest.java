@@ -10,20 +10,16 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package charlie.test;
+package charlie.test.core;
 
-import charlie.actor.Arriver;
-import charlie.actor.ClientAuthenticator;
 import charlie.actor.Courier;
 import charlie.card.Card;
 import charlie.card.Hid;
 import charlie.dealer.Seat;
 import charlie.plugin.IUi;
-import charlie.server.Ticket;
+import charlie.test.framework.Perfect;
 
-import java.io.FileInputStream;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * This class is a  demo of a simple but plausible unit test case of
@@ -49,25 +45,6 @@ public class UserBlackjackTest extends Perfect implements IUi {
     public void test() throws Exception {
         // Start the server
         go(this);
-
-        // Load props
-        Properties props = System.getProperties();
-        props.load(new FileInputStream("UserBlackjack.props"));
-
-        // Connect to game server securely.
-        ClientAuthenticator authenticator = new ClientAuthenticator();
-        Ticket ticket = authenticator.send("tester","123");
-        info("connecting to server");
-
-        // Start the courier which sends messages to & receive messages from the server
-        // except only after we've arrived.
-        courier = new Courier(this);
-        courier.start();
-        info("courier started");
-
-        // Tell the game server we've arrived.
-        new Arriver(ticket).send();
-        info("we ARRIVED!");
 
         // Wait for READY
         synchronized (this) {

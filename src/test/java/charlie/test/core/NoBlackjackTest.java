@@ -10,27 +10,24 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package charlie.test;
+package charlie.test.core;
 
-import charlie.actor.Arriver;
-import charlie.actor.ClientAuthenticator;
 import charlie.actor.Courier;
 import charlie.card.Card;
 import charlie.card.Hid;
 import charlie.dealer.Seat;
 import charlie.plugin.IUi;
-import charlie.server.Ticket;
+import charlie.test.framework.Perfect;
 
-import java.io.FileInputStream;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * This class is a demo of a simple but plausible unit test case of
- * Dealer Blackjack logic.
+ * neither user nor dealer getting Blackjack logic.
  * @author Elizabeth Herrera
  */
-public class DealerBlackjackTest extends AbstractTestCase implements IUi {
+public class NoBlackjackTest extends Perfect implements IUi {
+    // Class-level bet constants + net tracker
     final int BET_AMT = 5;
     final int SIDE_BET_AMT = 0;
 
@@ -39,7 +36,7 @@ public class DealerBlackjackTest extends AbstractTestCase implements IUi {
     Courier courier = null;
     boolean bj = false;
 
-    // Track total winnings (net)
+    // Track total net winnings from YOU perspective
     private double totalWinnings = 0.0;
 
     /**
@@ -47,25 +44,7 @@ public class DealerBlackjackTest extends AbstractTestCase implements IUi {
      */
     public void test() throws Exception {
         // Start the server
-        go();
-
-        // Load props
-        Properties props = System.getProperties();
-        props.load(new FileInputStream("DealerBlackjack.props"));
-
-        // Connect to game server securely
-        ClientAuthenticator authenticator = new ClientAuthenticator();
-        Ticket ticket = authenticator.send("tester", "123");
-        info("connecting to server");
-
-        // Start courier
-        courier = new Courier(this);
-        courier.start();
-        info("courier started");
-
-        // Tell server we've arrived
-        new Arriver(ticket).send();
-        info("we ARRIVED!");
+        go(this);
 
         // Wait for READY
         synchronized (this) {
@@ -74,47 +53,61 @@ public class DealerBlackjackTest extends AbstractTestCase implements IUi {
         }
         info("server READY !");
 
-        // Place bet
+        // Start game (neither should have BJ per props)
         courier.bet(BET_AMT, SIDE_BET_AMT);
         info("bet amt: " + BET_AMT + ", side bet: " + SIDE_BET_AMT);
 
-        // Check for dealer blackjack
-        info("checking if blackjack was detected...");
-        if (bj) {
-            info("SUCCESS: Blackjack was triggered for DEALER!");
+        // If no BJ, we choose to stay (you also send stay again on turn; keeping your flow)
+        info("game over: " + gameOver);
+        if (!gameOver) {
+            courier.stay(you);
+            info("sent STAY");
         } else {
-            info("FAILURE: Blackjack was not detected!");
+            assert bj : "YOU nor DEALER have Blackjack";
+            info("YOU or DEALER have a Blackjack");
         }
 
-        // Wait for end of game
+        // Wait for end
         synchronized (this) {
             info("waiting ENDING...");
             this.wait();
         }
 
-        info("DONE!");
-        info("DEALER has blackjack!");
-        info("Dealer Blackjack Test SUCCESSFUL");
+        info("DONE !");
     }
 
+    /**
+     * Invoked whenever a card is dealt.
+     */
     @Override
     public void deal(Hid hid, Card card, int[] handValues) {
         info("DEAL: " + hid + " card: " + card + " hand values: " + handValues[0] + ", " + handValues[1]);
     }
 
+    /**
+     * Invoked only once whenever the turn changes.
+     */
     @Override
-    public void turn(Hid hid) {
+    public void play(Hid hid) {
         if (hid.getSeat() != Seat.YOU)
             return;
+
+        // Sends stay message to server side
         new Thread(() -> courier.stay(hid)).start();
     }
 
+    /**
+     * Invoked if a hand breaks.
+     */
     @Override
     public void bust(Hid hid) {
         info("BREAK: " + hid);
         assert false;
     }
 
+    /**
+     * Invoked for a winning hand.
+     */
     @Override
     public void win(Hid hid) {
         info("WIN: " + hid);
@@ -124,50 +117,63 @@ public class DealerBlackjackTest extends AbstractTestCase implements IUi {
         assert pl == BET_AMT : "unexpected P&L: " + pl;
         // update total winnings
         totalWinnings += pl;
-        assert false;
     }
 
+    /**
+     * Invoked for a losing hand.
+     */
     @Override
     public void lose(Hid hid) {
         info("LOSE: " + hid);
         double pl = hid.getAmt();
-
         if (hid.getSeat() == Seat.YOU) {
-            // If YOU lost, pl is probably negative; add directly (subtracts)
-            totalWinnings += pl;
+            totalWinnings += pl;             // likely negative → subtracts
         } else if (hid.getSeat() == Seat.DEALER) {
-            // Dealer loses means you gain
-            totalWinnings += Math.abs(pl);
+            totalWinnings += Math.abs(pl);   // dealer loss increases your net
         }
     }
 
+    /**
+     * Invoked for a push (tie).
+     */
     @Override
     public void push(Hid hid) {
         info("PUSH: " + hid + " (net change $0)");
         assert false;
     }
 
+    /**
+     * Invoked for a (natural) Blackjack hand.
+     */
     @Override
     public void blackjack(Hid hid) {
         info("BLACKJACK: " + hid);
         bj = true;
         double pl = hid.getAmt();
-
         if (hid.getSeat() == Seat.YOU) {
             totalWinnings += pl;
         } else if (hid.getSeat() == Seat.DEALER) {
             totalWinnings -= Math.abs(pl);
         }
-    }
-
-    @Override
-    public void charlie(Hid hid) {
         assert false;
     }
 
+    /**
+     * Invoked for a 5-card Charlie hand.
+     */
     @Override
-    public void starting(List<Hid> hids, int shoeSize) {
+    public void charlie(Hid hid) {
+        // Not possible for this test case.
+        assert false;
+    }
+
+    /**
+     * Invoked at the start of a game before any cards are dealt.
+     */
+    @Override
+    public void startGame(List<Hid> hids, int shoeSize) {
         StringBuilder buffer = new StringBuilder();
+
         buffer.append("game STARTING: ");
 
         for (Hid hid : hids) {
@@ -179,25 +185,39 @@ public class DealerBlackjackTest extends AbstractTestCase implements IUi {
         info(buffer.toString());
     }
 
+    /**
+     * Invoked after a game ends and before the start of a new game.
+     */
     @Override
-    public void ending(int shoeSize) {
+    public void endGame(int shoeSize) {
         synchronized (this) {
             this.notifyAll();
         }
+
         info("ENDING game shoe size: " + shoeSize);
         info("TOTAL WINNINGS: $" + totalWinnings);
     }
 
+    /**
+     * Invoked when the burn card appears, it indicates a re-shuffle is coming.
+     */
     @Override
     public void shuffling() {
         info("SHUFFLING");
     }
 
+    /**
+     * Not used here because the test case instantiates a courier.
+     */
     @Override
     public void setCourier(Courier courier) { }
 
+    /**
+     * Invoked when a player requests a split.
+     */
     @Override
     public void split(Hid newHid, Hid origHid) {
+        // Not possible for this test case.
         assert false;
     }
 }

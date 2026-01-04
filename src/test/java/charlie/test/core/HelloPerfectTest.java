@@ -10,13 +10,15 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package charlie.test;
+package charlie.test.core;
 
 import charlie.actor.Courier;
 import charlie.card.Card;
 import charlie.card.Hid;
 import charlie.dealer.Seat;
 import charlie.plugin.IUi;
+import charlie.test.framework.Perfect;
+
 import java.util.List;
 
 /**

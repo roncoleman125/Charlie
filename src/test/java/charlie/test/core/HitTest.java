@@ -10,28 +10,24 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package charlie.test;
+package charlie.test.core;
 
-import charlie.actor.Arriver;
-import charlie.actor.ClientAuthenticator;
 import charlie.actor.Courier;
 import charlie.card.Card;
 import charlie.card.Hand;
 import charlie.card.Hid;
 import charlie.dealer.Seat;
 import charlie.plugin.IUi;
-import charlie.server.Ticket;
+import charlie.test.framework.Perfect;
 
-import java.io.FileInputStream;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * This class is a  demo of a simple but plausible unit test case of HIT logic.
  * It assumes a heads-up game: 6+9+5S vs. 7+10 where "S" is a spades.
  * @author Elizabeth Herrera
  */
-public class HitTest extends AbstractTestCase implements IUi {
+public class HitTest extends Perfect implements IUi {
     final int BET_AMT = 5;
     final int SIDE_BET_AMT = 0;
 
@@ -47,26 +43,7 @@ public class HitTest extends AbstractTestCase implements IUi {
      */
     public void test() throws Exception {
         // Start the server
-        go();
-
-        // Authentication looks for these properties
-        Properties props = System.getProperties();
-        props.load(new FileInputStream("Hit.props"));
-
-        // Connect to game server securely.
-        ClientAuthenticator authenticator = new ClientAuthenticator();
-        Ticket ticket = authenticator.send("tester","123");
-        info("connecting to server");
-
-        // Start the courier which sends messages to & receive messages from the serve
-        // except only after we've arrived.
-        courier = new Courier(this);
-        courier.start();
-        info("courier started");
-
-        // Tell the game server we've arrived.
-        new Arriver(ticket).send();
-        info("we ARRIVED!");
+        go(this);
 
         // Game server will be ready when it notifies us; see Courier.got(:Ready).
         synchronized (this) {
@@ -123,7 +100,7 @@ public class HitTest extends AbstractTestCase implements IUi {
      * @param hid New hand's turn
      */
     @Override
-    public void turn(Hid hid) {
+    public void play(Hid hid) {
         if(hid.getSeat() == Seat.YOU) {
             myTurn = true;
             new Thread(() -> courier.hit(you)).start();
@@ -213,7 +190,7 @@ public class HitTest extends AbstractTestCase implements IUi {
      * @param shoeSize Current shoe size, ie, original shoe less cards dealt
      */
     @Override
-    public void starting(List<Hid> hids, int shoeSize) {
+    public void startGame(List<Hid> hids, int shoeSize) {
         StringBuilder buffer = new StringBuilder();
 
         buffer.append("game STARTING: ");
@@ -231,10 +208,10 @@ public class HitTest extends AbstractTestCase implements IUi {
 
     /**
      * This method gets invoked after a game ends and before the start of a new game.
-     * @param shoeSize Endind shoe size
+     * @param shoeSize Ending shoe size
      */
     @Override
-    public void ending(int shoeSize) {
+    public void endGame(int shoeSize) {
         synchronized(gameOver) {
             gameOver.notify();
         }

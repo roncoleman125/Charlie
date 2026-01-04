@@ -9,7 +9,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package charlie.test;
+package charlie.test.framework;
 
 import charlie.actor.Arriver;
 import charlie.actor.ClientAuthenticator;
@@ -29,7 +29,7 @@ import java.util.Properties;
  */
 public abstract class Perfect extends TestCase {
     Logger LOG = Logger.getLogger(this.getClass());
-    Courier courier = null;
+    protected Courier courier = null;
 
     /**
      *
