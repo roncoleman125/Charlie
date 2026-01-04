@@ -248,7 +248,7 @@ public class Courier extends Actor implements Listener {
         for(Hid hid: starting.getHids())
             LOG.info("starting hand: "+hid);
         
-        ui.starting(starting.getHids(),starting.shoeSize());
+        ui.startGame(starting.getHids(),starting.shoeSize());
     }
 
     /**
@@ -277,7 +277,7 @@ public class Courier extends Actor implements Listener {
     public void got(Play turn) {
         LOG.info("got turn = "+turn.getHid());
         
-        ui.turn(turn.getHid());
+        ui.play(turn.getHid());
 
     }
     
@@ -287,7 +287,7 @@ public class Courier extends Actor implements Listener {
      */
     public void got(GameOver ending) {
         LOG.info("received ending shoe size = "+ending.getShoeSize());
-        ui.ending(ending.getShoeSize());
+        ui.endGame(ending.getShoeSize());
     }
     
     /**

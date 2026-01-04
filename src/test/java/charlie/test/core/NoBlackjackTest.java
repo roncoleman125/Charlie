@@ -1,0 +1,223 @@
+/*
+ * Copyright (c) Ron Coleman
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+package charlie.test.core;
+
+import charlie.actor.Courier;
+import charlie.card.Card;
+import charlie.card.Hid;
+import charlie.dealer.Seat;
+import charlie.plugin.IUi;
+import charlie.test.framework.Perfect;
+
+import java.util.List;
+
+/**
+ * This class is a demo of a simple but plausible unit test case of
+ * neither user nor dealer getting Blackjack logic.
+ * @author Elizabeth Herrera
+ */
+public class NoBlackjackTest extends Perfect implements IUi {
+    // Class-level bet constants + net tracker
+    final int BET_AMT = 5;
+    final int SIDE_BET_AMT = 0;
+
+    Hid you;
+    final Boolean gameOver = false;
+    Courier courier = null;
+    boolean bj = false;
+
+    // Track total net winnings from YOU perspective
+    private double totalWinnings = 0.0;
+
+    /**
+     * Runs the test.
+     */
+    public void test() throws Exception {
+        // Start the server
+        go(this);
+
+        // Wait for READY
+        synchronized (this) {
+            info("waiting for server READY...");
+            this.wait();
+        }
+        info("server READY !");
+
+        // Start game (neither should have BJ per props)
+        courier.bet(BET_AMT, SIDE_BET_AMT);
+        info("bet amt: " + BET_AMT + ", side bet: " + SIDE_BET_AMT);
+
+        // If no BJ, we choose to stay (you also send stay again on turn; keeping your flow)
+        info("game over: " + gameOver);
+        if (!gameOver) {
+            courier.stay(you);
+            info("sent STAY");
+        } else {
+            assert bj : "YOU nor DEALER have Blackjack";
+            info("YOU or DEALER have a Blackjack");
+        }
+
+        // Wait for end
+        synchronized (this) {
+            info("waiting ENDING...");
+            this.wait();
+        }
+
+        info("DONE !");
+    }
+
+    /**
+     * Invoked whenever a card is dealt.
+     */
+    @Override
+    public void deal(Hid hid, Card card, int[] handValues) {
+        info("DEAL: " + hid + " card: " + card + " hand values: " + handValues[0] + ", " + handValues[1]);
+    }
+
+    /**
+     * Invoked only once whenever the turn changes.
+     */
+    @Override
+    public void play(Hid hid) {
+        if (hid.getSeat() != Seat.YOU)
+            return;
+
+        // Sends stay message to server side
+        new Thread(() -> courier.stay(hid)).start();
+    }
+
+    /**
+     * Invoked if a hand breaks.
+     */
+    @Override
+    public void bust(Hid hid) {
+        info("BREAK: " + hid);
+        assert false;
+    }
+
+    /**
+     * Invoked for a winning hand.
+     */
+    @Override
+    public void win(Hid hid) {
+        info("WIN: " + hid);
+        Seat who = hid.getSeat();
+        double pl = hid.getAmt();
+        // Accepts normal win
+        assert pl == BET_AMT : "unexpected P&L: " + pl;
+        // update total winnings
+        totalWinnings += pl;
+    }
+
+    /**
+     * Invoked for a losing hand.
+     */
+    @Override
+    public void lose(Hid hid) {
+        info("LOSE: " + hid);
+        double pl = hid.getAmt();
+        if (hid.getSeat() == Seat.YOU) {
+            totalWinnings += pl;             // likely negative → subtracts
+        } else if (hid.getSeat() == Seat.DEALER) {
+            totalWinnings += Math.abs(pl);   // dealer loss increases your net
+        }
+    }
+
+    /**
+     * Invoked for a push (tie).
+     */
+    @Override
+    public void push(Hid hid) {
+        info("PUSH: " + hid + " (net change $0)");
+        assert false;
+    }
+
+    /**
+     * Invoked for a (natural) Blackjack hand.
+     */
+    @Override
+    public void blackjack(Hid hid) {
+        info("BLACKJACK: " + hid);
+        bj = true;
+        double pl = hid.getAmt();
+        if (hid.getSeat() == Seat.YOU) {
+            totalWinnings += pl;
+        } else if (hid.getSeat() == Seat.DEALER) {
+            totalWinnings -= Math.abs(pl);
+        }
+        assert false;
+    }
+
+    /**
+     * Invoked for a 5-card Charlie hand.
+     */
+    @Override
+    public void charlie(Hid hid) {
+        // Not possible for this test case.
+        assert false;
+    }
+
+    /**
+     * Invoked at the start of a game before any cards are dealt.
+     */
+    @Override
+    public void startGame(List<Hid> hids, int shoeSize) {
+        StringBuilder buffer = new StringBuilder();
+
+        buffer.append("game STARTING: ");
+
+        for (Hid hid : hids) {
+            buffer.append(hid).append(", ");
+            if (hid.getSeat() == Seat.YOU)
+                this.you = hid;
+        }
+        buffer.append(" shoe size: ").append(shoeSize);
+        info(buffer.toString());
+    }
+
+    /**
+     * Invoked after a game ends and before the start of a new game.
+     */
+    @Override
+    public void endGame(int shoeSize) {
+        synchronized (this) {
+            this.notifyAll();
+        }
+
+        info("ENDING game shoe size: " + shoeSize);
+        info("TOTAL WINNINGS: $" + totalWinnings);
+    }
+
+    /**
+     * Invoked when the burn card appears, it indicates a re-shuffle is coming.
+     */
+    @Override
+    public void shuffling() {
+        info("SHUFFLING");
+    }
+
+    /**
+     * Not used here because the test case instantiates a courier.
+     */
+    @Override
+    public void setCourier(Courier courier) { }
+
+    /**
+     * Invoked when a player requests a split.
+     */
+    @Override
+    public void split(Hid newHid, Hid origHid) {
+        // Not possible for this test case.
+        assert false;
+    }
+}

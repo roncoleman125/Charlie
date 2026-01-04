@@ -53,7 +53,8 @@ public class GameServer {
         new GameServer().go();
     }
     
-    protected void go() {
+    public void go() {
+        final String CHARLIE_PROPS_PATH = System.getProperty("charlie.props","charlie.props");
         try {
             // Override default log file name in log4j.properties.
             System.getProperties().setProperty("LOGFILE","log-server.out");
@@ -67,7 +68,7 @@ public class GameServer {
             // Start the actor server
             Properties props = System.getProperties();
             
-            props.load(new FileInputStream("charlie.props"));
+            props.load(new FileInputStream(CHARLIE_PROPS_PATH));
 
             // Spawn the house
             House house = new House(this);

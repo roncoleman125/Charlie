@@ -1,0 +1,284 @@
+package charlie.test.core;
+
+import charlie.actor.Courier;
+import charlie.card.Card;
+import charlie.card.Hand;
+import charlie.card.Hid;
+import charlie.dealer.Seat;
+import charlie.plugin.IUi;
+import charlie.test.framework.Perfect;
+
+import java.util.List;
+
+/**
+ * This class is a demo of a simple but plausible unit test case of Split logic.
+ * @author Tyler DeLorey
+ */
+public class SplitTest extends Perfect implements IUi {
+    final int BET_AMT = 5;
+    final int SIDE_BET_AMT = 0;
+    Hid you;
+
+    // Split hands
+    Hid split1;
+    Hid split2;
+
+    final Boolean gameOver = false;
+    Courier courier = null;
+    Boolean myTurn = false;
+
+    // Added hands for split case
+    Hand myHand = null;
+    Hand mySplitHand1 = null;
+    Hand mySplitHand2 = null;
+
+    // track total winnings
+    private double totalWinnings = 0.0;
+
+    /**
+     * Runs the test.
+     */
+    public void test() throws Exception {
+        // Start the server
+        go(this);
+
+        // Wait for dealer to call READY
+        synchronized (this) {
+            info("waiting for server READY...");
+            this.wait();
+        }
+
+        info("server READY !");
+
+        courier.bet(BET_AMT, SIDE_BET_AMT);
+        info("bet amt: " + BET_AMT + ", side bet: " + SIDE_BET_AMT);
+
+        // Wait for dealer to call end of game
+        synchronized (gameOver) {
+            info("waiting ENDING...");
+            gameOver.wait();
+        }
+
+        info("DONE !");
+    }
+
+    /**
+     * Invoked whenever a card is dealt.
+     */
+    @Override
+    public void deal(Hid hid, Card card, int[] handValues) {
+        info("DEAL: " + hid + " card: " + card + " hand values: " + handValues[0] + ", " + handValues[1]);
+
+        // Assign the dealt card to the correct player's hand
+        //
+        // The server identifies hands using Hid values. We track three:
+        //   - you        : original hand before the split
+        //   - split1     : first hand created after splitting the pair
+        //   - split2     : second hand created after splitting the pair
+        //
+        // Makes sure it is the player's turn
+        if (hid.getSeat() == Seat.YOU) {
+
+            // Original hand (before split)
+            if (hid.equals(you)) {
+                assert myHand != null : "bad hand";
+                myHand.hit(card);
+            }
+
+            // First split hand
+            else if (hid.equals(split1)) {
+                assert mySplitHand1 != null : "bad split 1 hand";
+                mySplitHand1.hit(card);
+            }
+
+            // Second split hand
+            else if (hid.equals(split2)) {
+                assert mySplitHand2 != null : "bad split 2 hand";
+                mySplitHand2.hit(card);
+            }
+        }
+
+        // Validate that after the split, the SECOND card dealt to each
+        // split hand matches the expected scripted test sequence:
+
+        // split1 second card -> 10 of Spades
+        if (hid.equals(split1) && mySplitHand1.size() == 2) {
+            assert card.getRank() == 10 && card.getSuit() == Card.Suit.SPADES :
+                    "Expected S10 for first split hand, got " + card;
+        }
+
+        // split2 second card -> 9 of Diamonds
+        else if (hid.equals(split2) && mySplitHand2.size() == 2) {
+            assert card.getRank() == 9 && card.getSuit() == Card.Suit.DIAMONDS :
+                    "Expected D9 for second split hand, got " + card;
+        }
+    }
+
+    /**
+     * Invoked when turn changes.
+     */
+    @Override
+    public void play(Hid hid) {
+        if (hid.getSeat() != Seat.YOU) {
+            myTurn = false;
+            return;
+        }
+
+        myTurn = true;
+
+        // If this is the original hand (before split)
+        if (hid.equals(you)) {
+            assert myHand.size() == 2;
+            assert myHand.getCard(0).getRank() == 9;
+            assert myHand.getCard(1).getRank() == 9;
+
+            // Split the 9s
+            info("Splitting pair of 9s...");
+            new Thread(() -> courier.split(you)).start();
+        }
+        // Issue a stay for the second split hid
+        else if (hid.equals(split2)) {
+            info("Staying on second split hand...");
+            new Thread(() -> courier.stay(split2)).start();
+        }
+    }
+
+    /**
+     * Invoked if a hand breaks.
+     */
+    @Override
+    public void bust(Hid hid) {
+        info("BREAK: " + hid);
+        assert false;
+    }
+
+    /**
+     * Invoked for a winning hand.
+     */
+    @Override
+    public void win(Hid hid) {
+
+        // For this test case, assure that you win
+        info("WIN: " + hid);
+        Seat who = hid.getSeat();
+        assert who == Seat.YOU : "you didn't win " + who + " did";
+        double pl = hid.getAmt();
+
+        // Accepts normal win
+        assert pl == BET_AMT : "unexpected P&L: " + pl;
+
+        // update total winnings
+        totalWinnings += pl;
+    }
+
+    /**
+     * Invoked for a losing hand.
+     */
+    @Override
+    public void lose(Hid hid) {
+
+        // For this test case, assure that the dealer loses
+        info("LOSE: " + hid);
+        Seat who = hid.getSeat();
+        assert who == Seat.DEALER : "dealer didn't lose " + who + " did";
+        double pl = hid.getAmt();
+
+        // Accept normal or double-down loss
+        assert pl == BET_AMT : "unexpected P&L: " + pl;
+
+        // subtract loss from total winnings
+        totalWinnings -= pl;
+    }
+
+    /**
+     * Invoked for a push.
+     */
+    @Override
+    public void push(Hid hid) {
+        info("PUSH: " + hid + " (net change $0)");
+        assert false;
+    }
+
+    /**
+     * Invoked for a natural Blackjack.
+     */
+    @Override
+    public void blackjack(Hid hid) {
+        info("BLACKJACK: " + hid);
+        assert false;
+    }
+
+    /**
+     * Invoked for a 5-card Charlie hand.
+     */
+    @Override
+    public void charlie(Hid hid) {
+        assert false;
+    }
+
+    /**
+     * Invoked at start of a game before any cards are dealt.
+     */
+    @Override
+    public void startGame(List<Hid> hids, int shoeSize) {
+        StringBuilder buffer = new StringBuilder();
+        buffer.append("game STARTING: ");
+
+        for (Hid hid : hids) {
+            buffer.append(hid).append(", ");
+            if (hid.getSeat() == Seat.YOU) {
+                this.you = hid;
+                myHand = new Hand(you);
+            }
+        }
+        buffer.append(" shoe size: ").append(shoeSize);
+        info(buffer.toString());
+    }
+
+    /**
+     * Invoked after a game ends and before a new one starts.
+     */
+    @Override
+    public void endGame(int shoeSize) {
+        synchronized (gameOver) {
+            gameOver.notify();
+        }
+
+        info("ENDING game shoe size: " + shoeSize);
+        info("TOTAL WINNINGS: $" + totalWinnings);
+    }
+
+    /**
+     * Invoked when the burn card appears.
+     */
+    @Override
+    public void shuffling() {
+        info("SHUFFLING");
+        assert false;
+    }
+
+    @Override
+    public void setCourier(Courier courier) { }
+
+    /**
+     * Invoked when a player requests a split.
+     */
+    @Override
+    public void split(Hid newHid, Hid origHid) {
+        info("SPLIT: new Hand " + newHid + " from " + origHid);
+
+        // Set new HIDs for the split hand
+        split1 = origHid;
+        split2 = newHid;
+
+        // Create new Hands for the split using the HIDs
+        mySplitHand1 = new Hand(split1);
+        mySplitHand2 = new Hand(split2);
+
+        info("Assigned Split 1 " + split1);
+        info("Assigned Split 2 " + split2);
+
+        // Issue a stay on the first split
+        new Thread(() -> courier.stay(split1)).start();
+    }
+}
