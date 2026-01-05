@@ -28,7 +28,9 @@ import java.util.Properties;
  * @author Ron.Coleman
  */
 public abstract class Perfect extends TestCase {
-    Logger LOG = Logger.getLogger(this.getClass());
+    final Logger LOG = Logger.getLogger(this.getClass());
+    final String CHARLIE_PROPS_PATH = System.getProperty("charlie.props","charlie.props");
+
     protected Courier courier = null;
 
     /**
@@ -65,6 +67,10 @@ public abstract class Perfect extends TestCase {
      * Launches the game server and logs in.
      */
     public void go(IUi ui) throws Exception {
+        // Authentication looks for these properties
+        Properties props = System.getProperties();
+        props.load(new FileInputStream(CHARLIE_PROPS_PATH));
+
         // Start server as a worker thread.
         new Thread(() -> {
             new GameServer().go();
@@ -72,10 +78,6 @@ public abstract class Perfect extends TestCase {
 
         // Wait for server to start properly
         sleep(500);
-
-        // Authentication looks for these properties
-        Properties props = System.getProperties();
-        props.load(new FileInputStream("charlie.props"));
 
         // Connect to game server securely.
         ClientAuthenticator authenticator = new ClientAuthenticator();

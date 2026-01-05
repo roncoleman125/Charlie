@@ -84,10 +84,8 @@ public class Dealer implements Serializable {
         this.house = house;
 
         // Instantiate the shoe
-        Properties props = System.getProperties();
-        
-        String scenario = props.getProperty(Constant.PLUGIN_SHOE, "charlie.shoe.Shoe");
-        LOG.info("using scenario = '"+scenario+"'");
+        String scenario = System.getProperty(Constant.PLUGIN_SHOE, "charlie.shoe.Shoe");
+        LOG.info("properties shoe = "+System.getProperty("charlie.shoe"));
         
         shoe = ShoeFactory.getInstance(scenario);
         

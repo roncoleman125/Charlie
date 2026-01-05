@@ -33,7 +33,6 @@ public class HitTest extends Perfect implements IUi {
 
     Hid you;
     final Boolean gameOver = false;
-    Courier courier = null;
     Boolean myTurn = false;
     Hand myHand = null;
     private double totalWinnings = 0.0;
@@ -42,16 +41,11 @@ public class HitTest extends Perfect implements IUi {
      * Runs the test.
      */
     public void test() throws Exception {
+        System.setProperty("charlie.props","charlie-hit.props");
+
         // Start the server
         go(this);
 
-        // Game server will be ready when it notifies us; see Courier.got(:Ready).
-        synchronized (this) {
-            info("waiting for server READY...");
-            this.wait();
-        }
-
-        info("server READY !");
 
         // Start game by placing bet
         courier.bet(BET_AMT,SIDE_BET_AMT);

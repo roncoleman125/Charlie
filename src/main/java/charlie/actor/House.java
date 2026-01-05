@@ -48,7 +48,6 @@ import org.apache.log4j.Logger;
  */
 public class House extends Actor implements Listener {
     private final Logger LOG = Logger.getLogger(House.class);
-    private final String PLAYER_ACTOR = "PLAYER-";
     protected List<RealPlayer> players = new ArrayList<>();
     private Integer nextPlayerId = 0;
     private final GameServer server;
@@ -60,6 +59,8 @@ public class House extends Actor implements Listener {
      */
     public House(GameServer server) { 
         super(System.getProperty("charlie.server.house"));
+        LOG.info("house host = "+System.getProperty("charlie.server.house"));
+
         this.server = server;
     }
     
@@ -106,16 +107,12 @@ public class House extends Actor implements Listener {
         LOG.info("validated ticket = " + ticket);
         
         // Build address to courier to which real player is connected.
-        InetAddress addr = arrival.getSource();
-        LOG.info("arrival from " + addr);
+        InetAddress host = arrival.getSource();
+        LOG.info("arrival from host = " + host);
 
-        String courier = addr.getHostAddress() + ":" + arrival.getPort();
-        
-        // Get a dealer for this player
-        // Note: if we were allocating dealers from a pool, this is the place
-        // to implement that logic. For now we'll just spawn dealers without
-        // restriction.
-//        Dealer dealer = new Dealer(this);
+        String courier = host.getHostAddress() + ":" + arrival.getPort();
+
+        // Get a dealer for this player.
         Dealer dealer = loadDealer();
 
         // Spawn a "real player" sandwiched between dealer and courier.
@@ -144,9 +141,11 @@ public class House extends Actor implements Listener {
     protected Dealer loadDealer() {
         String className = System.getProperty(Constant.PLUGIN_DEALER);
         if(className == null) {
-            LOG.info("no dealer plugin configured using default: "+Dealer.class.getName());
+            LOG.info("using default dealer = "+Dealer.class.getName());
             return new Dealer(this);
         }
+
+        LOG.info("using dealer plugin = "+className);
 
         try {
             // Should be a Dealer-type class...
@@ -161,7 +160,8 @@ public class House extends Actor implements Listener {
             for(Constructor<?> constructor: constructors) {
                 if(Arrays.equals(parameterTypes,constructor.getParameterTypes())) {
                     Dealer dealer = (Dealer) constructor.newInstance(this);
-                    LOG.info("loaded dealer plugin: "+className);
+                    LOG.info("successfully instantiated dealer = "+className);
+
                     return dealer;
                 }
             }

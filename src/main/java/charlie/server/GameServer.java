@@ -38,7 +38,7 @@ import org.apache.log4j.Logger;
  * @author Ron Coleman
  */
 public class GameServer {
-    protected static  Logger LOG = null; 
+    protected static  Logger LOG = Logger.getLogger(GameServer.class);
     protected final static String HOUSE_ACTOR = "HOUSE";
     protected final static Random ran = new Random(0);
     protected final static Integer TOPOLOGY_PORT = 1234;
@@ -55,26 +55,30 @@ public class GameServer {
     
     public void go() {
         final String CHARLIE_PROPS_PATH = System.getProperty("charlie.props","charlie.props");
+        LOG.info("charlie properties path = "+CHARLIE_PROPS_PATH);
+
         try {
             // Override default log file name in log4j.properties.
             System.getProperties().setProperty("LOGFILE","log-server.out");
-            
-            // Launch the logger which causes log4j.properties to be read.
-            LOG = Logger.getLogger(GameServer.class);
 
             // Logging in earnest can now start.
             LOG.info("game server started");
             
             // Start the actor server
             Properties props = System.getProperties();
-            
             props.load(new FileInputStream(CHARLIE_PROPS_PATH));
 
+            LOG.info("shoe property = "+System.getProperty("charlie.shoe"));
+
             // Spawn the house
+            LOG.info("instantiating house");
+
             House house = new House(this);
+
             house.setListener(house);
+
             house.start();
-            LOG.info("house started");    
+            LOG.info("house successfully started");
   
             // Enter the authentication loop
             while(true) {
