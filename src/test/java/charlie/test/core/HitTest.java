@@ -44,7 +44,7 @@ public class HitTest extends Perfect implements IUi {
      */
     public void test() throws Exception {
         // This shoe is designed for test.
-//        System.setProperty(PLUGIN_SHOE,"charlie.shoe.HitShoe");
+        System.setProperty(PLUGIN_SHOE,"charlie.shoe.HitShoe");
 
         // Start the server
         go(this);
