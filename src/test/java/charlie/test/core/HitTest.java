@@ -22,6 +22,8 @@ import charlie.test.framework.Perfect;
 
 import java.util.List;
 
+import static charlie.util.Constant.PLUGIN_SHOE;
+
 /**
  * This class is a  demo of a simple but plausible unit test case of HIT logic.
  * It assumes a heads-up game: 6+9+5S vs. 7+10 where "S" is a spades.
@@ -41,11 +43,11 @@ public class HitTest extends Perfect implements IUi {
      * Runs the test.
      */
     public void test() throws Exception {
-        System.setProperty("charlie.props","charlie-hit.props");
+        // This shoe is designed for test.
+//        System.setProperty(PLUGIN_SHOE,"charlie.shoe.HitShoe");
 
         // Start the server
         go(this);
-
 
         // Start game by placing bet
         courier.bet(BET_AMT,SIDE_BET_AMT);

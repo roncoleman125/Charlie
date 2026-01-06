@@ -68,8 +68,6 @@ public class GameServer {
             Properties props = System.getProperties();
             props.load(new FileInputStream(CHARLIE_PROPS_PATH));
 
-            LOG.info("shoe property = "+System.getProperty("charlie.shoe"));
-
             // Spawn the house
             LOG.info("instantiating house");
 

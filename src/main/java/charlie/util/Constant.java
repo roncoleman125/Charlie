@@ -45,4 +45,5 @@ public class Constant {
     public final static String PLUGIN_SHOE = "charlie.shoe";
     public final static String PLUGIN_ADVISOR = "charlie.advisor";
     public final static String PLUGIN_DEALER = "charlie.server.dealer";
+    public final static String DEFAULT_SHOE = "charlie.shoe.Shoe01";
 }

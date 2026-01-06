@@ -41,6 +41,8 @@ import java.util.logging.Level;
 import charlie.util.Play;
 import org.apache.log4j.Logger;
 
+import static charlie.util.Constant.DEFAULT_SHOE;
+
 /**
  * This class implements the Blackjack dealer.
  * It uses the following rules:<br>
@@ -84,15 +86,12 @@ public class Dealer implements Serializable {
         this.house = house;
 
         // Instantiate the shoe
-        String scenario = System.getProperty(Constant.PLUGIN_SHOE, "charlie.shoe.Shoe");
-        LOG.info("properties shoe = "+System.getProperty("charlie.shoe"));
-        
+        String scenario = System.getProperty(Constant.PLUGIN_SHOE, DEFAULT_SHOE);
+        LOG.info("shoe property: "+scenario);
+
         shoe = ShoeFactory.getInstance(scenario);
-        
         shoe.init();
-        
-        LOG.info("shoe = "+shoe);
-        
+
         loadSideRule();
     }
     
