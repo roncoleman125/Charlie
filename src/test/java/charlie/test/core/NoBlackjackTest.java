@@ -33,7 +33,6 @@ public class NoBlackjackTest extends Perfect implements IUi {
 
     Hid you;
     final Boolean gameOver = false;
-    Courier courier = null;
     boolean bj = false;
 
     // Track total net winnings from YOU perspective
@@ -43,15 +42,11 @@ public class NoBlackjackTest extends Perfect implements IUi {
      * Runs the test.
      */
     public void test() throws Exception {
+        // Shoe designed for this test
+        System.setProperty("charlie.shoe","charlie.shoe.NoBJShoe");
+
         // Start the server
         go(this);
-
-        // Wait for READY
-        synchronized (this) {
-            info("waiting for server READY...");
-            this.wait();
-        }
-        info("server READY !");
 
         // Start game (neither should have BJ per props)
         courier.bet(BET_AMT, SIDE_BET_AMT);

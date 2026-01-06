@@ -41,15 +41,11 @@ public class EveryoneBlackjackTest extends Perfect implements IUi {
      * Runs the test.
      */
     public void test() throws Exception {
+        // Shoe designed for this test
+        System.setProperty("charlie.shoe","charlie.shoe.EveryoneBJShoe");
+
         // Start the server
         go(this);
-
-        // Wait for READY
-        synchronized (this) {
-            info("waiting for server READY...");
-            this.wait();
-        }
-        info("server READY !");
 
         // Start game
         courier.bet(BET_AMT, SIDE_BET_AMT);
@@ -60,6 +56,7 @@ public class EveryoneBlackjackTest extends Perfect implements IUi {
             info("waiting ENDING...");
             this.wait();
         }
+
         info("DONE!");
         info("YOU and the DEALER have blackjack!");
     }

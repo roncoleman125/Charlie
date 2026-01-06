@@ -24,7 +24,6 @@ public class SplitTest extends Perfect implements IUi {
     Hid split2;
 
     final Boolean gameOver = false;
-    Courier courier = null;
     Boolean myTurn = false;
 
     // Added hands for split case
@@ -39,16 +38,11 @@ public class SplitTest extends Perfect implements IUi {
      * Runs the test.
      */
     public void test() throws Exception {
+        // Shoe designed for this test
+        System.setProperty("charlie.shoe","charlie.shoe.SplitShoe00");
+
         // Start the server
         go(this);
-
-        // Wait for dealer to call READY
-        synchronized (this) {
-            info("waiting for server READY...");
-            this.wait();
-        }
-
-        info("server READY !");
 
         courier.bet(BET_AMT, SIDE_BET_AMT);
         info("bet amt: " + BET_AMT + ", side bet: " + SIDE_BET_AMT);

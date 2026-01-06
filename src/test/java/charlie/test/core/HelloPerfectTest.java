@@ -22,7 +22,7 @@ import charlie.test.framework.Perfect;
 import java.util.List;
 
 /**
- * This class is the base test case.
+ * This class is the minimalist perfect  test case.
  * @author Ron.Coleman
  */
 public class HelloPerfectTest extends Perfect implements IUi {
@@ -32,7 +32,7 @@ public class HelloPerfectTest extends Perfect implements IUi {
      * Runs the test.
      */
     public void test() throws Exception {
-        // Starts the server and logs in
+        // Starts the server and logs in using only defaults
         go(this);
 
         // Now that the game server is ready, to start a game, we just need to

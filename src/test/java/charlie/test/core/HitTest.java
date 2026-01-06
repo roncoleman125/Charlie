@@ -43,7 +43,7 @@ public class HitTest extends Perfect implements IUi {
      * Runs the test.
      */
     public void test() throws Exception {
-        // This shoe is designed for test.
+        // Shoe designed for this test
         System.setProperty(PLUGIN_SHOE,"charlie.shoe.HitShoe");
 
         // Start the server

@@ -19,7 +19,6 @@ public class DoubleDTest extends Perfect implements IUi {
     final int SIDE_BET_AMT = 0;
     Hid you;
     final Boolean gameOver = false;
-    Courier courier = null;
     Boolean myTurn = false;
     Hand myHand = null;
 
@@ -30,17 +29,13 @@ public class DoubleDTest extends Perfect implements IUi {
      * Runs the test.
      */
     public void test() throws Exception {
+        // Shoe designed for this test
+        System.setProperty("charlie.shoe","charlie.shoe.DoubleD");
+
         // Start the server
         go(this);
 
-        // Wait for dealer to call READY
-        synchronized (this) {
-            info("waiting for server READY...");
-            this.wait();
-        }
-
-        info("server READY !");
-
+        // Place bet
         courier.bet(BET_AMT, SIDE_BET_AMT);
         info("bet amt: " + BET_AMT + ", side bet: " + SIDE_BET_AMT);
 
@@ -104,8 +99,7 @@ public class DoubleDTest extends Perfect implements IUi {
         double pl = hid.getAmt();
 
         // Accept normal win or double-down win
-        assert pl == (double) (BET_AMT * 2)
-                : "unexpected P&L: " + pl;
+        assert pl == (double) (BET_AMT * 2): "unexpected P&L: " + pl;
 
         // update total winnings
         totalWinnings += pl;

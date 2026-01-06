@@ -45,33 +45,11 @@ public class DealerBlackjackTest extends Perfect implements IUi {
      * Runs the test.
      */
     public void test() throws Exception {
+        // Shoe designed for this test
+        System.setProperty("charlie.shoe","charlie.shoe.UserBJShoe");
+
         // Start the server
         go(this);
-
-        // Load props
-        Properties props = System.getProperties();
-        props.load(new FileInputStream("DealerBlackjack.props"));
-
-        // Connect to game server securely
-        ClientAuthenticator authenticator = new ClientAuthenticator();
-        Ticket ticket = authenticator.send("tester", "123");
-        info("connecting to server");
-
-        // Start courier
-        courier = new Courier(this);
-        courier.start();
-        info("courier started");
-
-        // Tell server we've arrived
-        new Arriver(ticket).send();
-        info("we ARRIVED!");
-
-        // Wait for READY
-        synchronized (this) {
-            info("waiting for server READY...");
-            this.wait();
-        }
-        info("server READY !");
 
         // Place bet
         courier.bet(BET_AMT, SIDE_BET_AMT);

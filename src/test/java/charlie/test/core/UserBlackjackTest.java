@@ -33,7 +33,6 @@ public class UserBlackjackTest extends Perfect implements IUi {
 
     Hid you;
     final Boolean gameOver = false;
-    Courier courier = null;
     boolean bj = false;
 
     // --- Track total winnings like in DoubleDTest ---
@@ -43,15 +42,10 @@ public class UserBlackjackTest extends Perfect implements IUi {
      * Runs the test.
      */
     public void test() throws Exception {
+        System.setProperty("charlie.shoe","charlie.shoe.UserBJShoe");
+
         // Start the server
         go(this);
-
-        // Wait for READY
-        synchronized (this) {
-            info("waiting for server READY...");
-            this.wait();
-        }
-        info("server READY !");
 
         // Start a game (like pressing DEAL)
         courier.bet(BET_AMT, SIDE_BET_AMT);
