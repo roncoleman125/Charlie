@@ -40,10 +40,10 @@ public class Constant {
     public final static int SHOE_Y = 0;
     public final static String PLUGIN_SIDE_BET_RULE = "charlie.sidebet.rule";     
     public final static String PLUGIN_SIDE_BET_VIEW = "charlie.sidebet.view"; 
-    public final static String PLUGIN_LOGAN = "charlie.bot.logan"; 
+    public final static String PLUGIN_LOGAN = "charlie.logan";
     public final static String PLUGIN_TRAP = "charlie.trap";
     public final static String PLUGIN_SHOE = "charlie.shoe";
     public final static String PLUGIN_ADVISOR = "charlie.advisor";
-    public final static String PLUGIN_DEALER = "charlie.server.dealer";
+    public final static String PLUGIN_DEALER = "charlie.dealer";
     public final static String DEFAULT_SHOE = "charlie.shoe.Shoe01";
 }
