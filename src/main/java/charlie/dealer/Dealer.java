@@ -87,10 +87,12 @@ public class Dealer implements Serializable {
 
         // Instantiate the shoe
         String scenario = System.getProperty(Constant.PLUGIN_SHOE, DEFAULT_SHOE);
-        LOG.info("shoe property: "+scenario);
+        LOG.info("shoe property '"+Constant.PLUGIN_SHOE+"' = '"+scenario+"'");
 
         shoe = ShoeFactory.getInstance(scenario);
         shoe.init();
+
+        LOG.info("shoe '"+scenario+"' instantiated successfully.");
 
         loadSideRule();
     }

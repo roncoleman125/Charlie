@@ -38,6 +38,11 @@ import org.apache.log4j.Logger;
  * @author Ron Coleman
  */
 public class GameServer {
+    // Override default log file name in log4j.properties.
+    static {
+        System.getProperties().setProperty("LOGFILE", "log-server.out");
+    }
+
     protected static  Logger LOG = Logger.getLogger(GameServer.class);
     protected final static String HOUSE_ACTOR = "HOUSE";
     protected final static Random ran = new Random(0);
@@ -58,8 +63,7 @@ public class GameServer {
         LOG.info("charlie properties path = "+CHARLIE_PROPS_PATH);
 
         try {
-            // Override default log file name in log4j.properties.
-            System.getProperties().setProperty("LOGFILE","log-server.out");
+
 
             // Logging in earnest can now start.
             LOG.info("game server started");
