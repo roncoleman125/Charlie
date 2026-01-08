@@ -42,7 +42,7 @@ public class UserBlackjackTest extends Perfect implements IUi {
      * Runs the test.
      */
     public void test() throws Exception {
-        System.setProperty("charlie.shoe","charlie.shoe.UserBJShoe");
+        System.setProperty("charlie.shoe","charlie.test.shoe.UserBJShoe");
 
         // Start the server
         go(this);

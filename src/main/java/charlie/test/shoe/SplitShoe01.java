@@ -1,8 +1,10 @@
-package charlie.shoe;
+package charlie.test.shoe;
 
 import charlie.card.Card;
 import charlie.card.Card.Suit;
 import java.util.Random;
+
+import charlie.shoe.Shoe;
 import org.apache.log4j.Logger;
 
 /**
@@ -10,7 +12,7 @@ import org.apache.log4j.Logger;
  * a "random-ish" pair every 5th hand/game.
  * @author blossom
  */
-public class SplitShoe01 extends Shoe{
+public class SplitShoe01 extends Shoe {
     
     private final Logger LOG = Logger.getLogger(SplitShoe01.class);
     

@@ -20,10 +20,11 @@
  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package charlie.shoe;
+package charlie.test.shoe;
 
 
 import charlie.card.Card;
+import charlie.shoe.Shoe;
 
 /**
  * Shoe for testing user blackjack.

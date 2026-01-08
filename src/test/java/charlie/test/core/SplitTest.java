@@ -39,7 +39,7 @@ public class SplitTest extends Perfect implements IUi {
      */
     public void test() throws Exception {
         // Shoe designed for this test
-        System.setProperty("charlie.shoe","charlie.shoe.SplitShoe00");
+        System.setProperty("charlie.shoe","charlie.test.shoe.SplitShoe00");
 
         // Start the server
         go(this);

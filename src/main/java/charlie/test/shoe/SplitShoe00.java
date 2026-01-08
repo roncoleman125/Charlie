@@ -1,6 +1,7 @@
-package charlie.shoe;
+package charlie.test.shoe;
 
 import charlie.card.Card;
+import charlie.shoe.Shoe;
 
 /**
  *
