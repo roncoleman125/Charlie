@@ -18,7 +18,6 @@ import charlie.card.Hid;
 import charlie.dealer.Seat;
 import charlie.plugin.IUi;
 import charlie.test.framework.Perfect;
-
 import java.util.List;
 
 /**

@@ -42,7 +42,7 @@ public class EveryoneBlackjackTest extends Perfect implements IUi {
      */
     public void test() throws Exception {
         // Shoe designed for this test
-        System.setProperty("charlie.shoe","charlie.shoe.EveryoneBJShoe");
+        System.setProperty("charlie.shoe","charlie.test.shoe.EveryoneBJShoe");
 
         // Start the server
         go(this);

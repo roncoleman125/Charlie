@@ -10,31 +10,36 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package charlie.shoe;
+package charlie.test.shoe;
 
 import charlie.card.Card;
+import charlie.shoe.Shoe;
 
 /**
- * This class creates a shoe to test the blackjack behavior.
+ * This class creates a shoe to test the charlie behavior.
  * @author Ron.Coleman
  */
-public class BlackjackShoe00 extends Shoe {
+public class CharlieShoe00 extends Shoe {
     @Override
     public void init() {
         cards.clear();
-
         // GAME 1
         // YOU
-        cards.add(new Card(Card.ACE, Card.Suit.SPADES));
+        cards.add(new Card(2, Card.Suit.SPADES));
 
         // DEALER
         cards.add(new Card(Card.QUEEN, Card.Suit.HEARTS));
 
         // YOU
-        cards.add(new Card(Card.KING, Card.Suit.HEARTS));
+        cards.add(new Card(3, Card.Suit.HEARTS));
 
         // DEALER
         cards.add(new Card(6, Card.Suit.CLUBS));
+
+        // YOU
+        cards.add(new Card(4, Card.Suit.HEARTS));
+        cards.add(new Card(5, Card.Suit.HEARTS));
+        cards.add(new Card(6, Card.Suit.HEARTS));
 
         // GAME 2
         // YOU

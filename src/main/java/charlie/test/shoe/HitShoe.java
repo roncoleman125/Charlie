@@ -20,30 +20,25 @@
  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package charlie.shoe;
+package charlie.test.shoe;
 
 
 import charlie.card.Card;
+import charlie.shoe.Shoe;
 
 /**
  * Shoe for testing neither the user nor dealer getting blackjack.
  * @author Elizabeth Herrera
  */
-public class NoBJShoe extends Shoe {
+public class HitShoe extends Shoe {
     @Override
     public void init() {
         cards.clear();
+        cards.add(new Card(6, Card.Suit.HEARTS));
+        cards.add(new Card(7, Card.Suit.DIAMONDS));
         cards.add(new Card(9, Card.Suit.CLUBS));
-        cards.add(new Card(7, Card.Suit.CLUBS));
-        cards.add(new Card(6, Card.Suit.CLUBS));
-        cards.add(new Card(Card.JACK, Card.Suit.CLUBS));
-        cards.add(new Card(5, Card.Suit.CLUBS));
-        cards.add(new Card(9, Card.Suit.CLUBS));
-        cards.add(new Card(4, Card.Suit.CLUBS));
-        cards.add(new Card(Card.JACK, Card.Suit.CLUBS));
-        cards.add(new Card(Card.JACK, Card.Suit.CLUBS));
-        cards.add(new Card(4, Card.Suit.CLUBS));
-        cards.add(new Card(4, Card.Suit.CLUBS));
+        cards.add(new Card(10, Card.Suit.HEARTS));
+        cards.add(new Card(5, Card.Suit.SPADES));
     }
 
     @Override

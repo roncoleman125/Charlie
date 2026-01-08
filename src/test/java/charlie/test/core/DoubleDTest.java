@@ -30,7 +30,7 @@ public class DoubleDTest extends Perfect implements IUi {
      */
     public void test() throws Exception {
         // Shoe designed for this test
-        System.setProperty("charlie.shoe","charlie.shoe.DoubleD");
+        System.setProperty("charlie.shoe","charlie.test.shoe.DoubleD");
 
         // Start the server
         go(this);

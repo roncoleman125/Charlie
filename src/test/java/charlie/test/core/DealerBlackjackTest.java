@@ -12,19 +12,14 @@
 
 package charlie.test.core;
 
-import charlie.actor.Arriver;
-import charlie.actor.ClientAuthenticator;
 import charlie.actor.Courier;
 import charlie.card.Card;
 import charlie.card.Hid;
 import charlie.dealer.Seat;
 import charlie.plugin.IUi;
-import charlie.server.Ticket;
 import charlie.test.framework.Perfect;
 
-import java.io.FileInputStream;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * This class is a demo of a simple but plausible unit test case of
@@ -46,7 +41,7 @@ public class DealerBlackjackTest extends Perfect implements IUi {
      */
     public void test() throws Exception {
         // Shoe designed for this test
-        System.setProperty("charlie.shoe","charlie.shoe.UserBJShoe");
+        System.setProperty("charlie.shoe","charlie.test.shoe.UserBJShoe");
 
         // Start the server
         go(this);

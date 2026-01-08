@@ -43,7 +43,7 @@ public class NoBlackjackTest extends Perfect implements IUi {
      */
     public void test() throws Exception {
         // Shoe designed for this test
-        System.setProperty("charlie.shoe","charlie.shoe.NoBJShoe");
+        System.setProperty("charlie.shoe","charlie.test.shoe.NoBJShoe");
 
         // Start the server
         go(this);
