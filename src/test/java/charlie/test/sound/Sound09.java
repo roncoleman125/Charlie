@@ -26,7 +26,6 @@ import charlie.audio.Sound;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import charlie.test.Sound00;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
