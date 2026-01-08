@@ -48,7 +48,7 @@ public class EveryoneBlackjackTest extends Perfect implements IUi {
         go(this);
 
         // Start game
-        courier.bet(BET_AMT, SIDE_BET_AMT);
+        bet(BET_AMT, SIDE_BET_AMT);
         info("bet amt: " + BET_AMT + ", side bet: " + SIDE_BET_AMT);
 
         // End game cleanly.
@@ -79,7 +79,7 @@ public class EveryoneBlackjackTest extends Perfect implements IUi {
             return;
 
         // Sends stay message to server side
-        new Thread(() -> courier.stay(hid)).start();
+        stay(hid);
     }
 
     /**

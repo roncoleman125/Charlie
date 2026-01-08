@@ -49,13 +49,13 @@ public class NoBlackjackTest extends Perfect implements IUi {
         go(this);
 
         // Start game (neither should have BJ per props)
-        courier.bet(BET_AMT, SIDE_BET_AMT);
+        bet(BET_AMT, SIDE_BET_AMT);
         info("bet amt: " + BET_AMT + ", side bet: " + SIDE_BET_AMT);
 
         // If no BJ, we choose to stay (you also send stay again on turn; keeping your flow)
         info("game over: " + gameOver);
         if (!gameOver) {
-            courier.stay(you);
+            stay(you);
             info("sent STAY");
         } else {
             assert bj : "YOU nor DEALER have Blackjack";
@@ -88,7 +88,7 @@ public class NoBlackjackTest extends Perfect implements IUi {
             return;
 
         // Sends stay message to server side
-        new Thread(() -> courier.stay(hid)).start();
+        stay(hid);
     }
 
     /**

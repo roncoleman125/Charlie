@@ -50,7 +50,7 @@ public class HitTest extends Perfect implements IUi {
         go(this);
 
         // Start game by placing bet
-        courier.bet(BET_AMT,SIDE_BET_AMT);
+        bet(BET_AMT,SIDE_BET_AMT);
         info("bet amt: "+BET_AMT+", side bet: "+SIDE_BET_AMT);
 
         // Wait for dealer to call end of game.
@@ -86,7 +86,7 @@ public class HitTest extends Perfect implements IUi {
                 assert card.getRank() == 5 && card.getSuit() == Card.Suit.SPADES;
 
                 // Let server know we're done.
-                new Thread(() -> courier.stay(you)).start();
+                stay(you);
             }
         }
     }
@@ -99,7 +99,7 @@ public class HitTest extends Perfect implements IUi {
     public void play(Hid hid) {
         if(hid.getSeat() == Seat.YOU) {
             myTurn = true;
-            new Thread(() -> courier.hit(you)).start();
+            hit(you);
         }
         else
             myTurn = false;

@@ -36,7 +36,7 @@ public class DoubleDTest extends Perfect implements IUi {
         go(this);
 
         // Place bet
-        courier.bet(BET_AMT, SIDE_BET_AMT);
+        bet(BET_AMT, SIDE_BET_AMT);
         info("bet amt: " + BET_AMT + ", side bet: " + SIDE_BET_AMT);
 
         // Wait for dealer to call end of game
@@ -74,7 +74,7 @@ public class DoubleDTest extends Perfect implements IUi {
     public void play(Hid hid) {
         if (hid.getSeat() == Seat.YOU) {
             myTurn = true;
-            new Thread(() -> courier.dubble(you)).start();
+            doubleDown(you);
         } else
             myTurn = false;
     }

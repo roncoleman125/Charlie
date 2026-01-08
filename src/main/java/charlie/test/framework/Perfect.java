@@ -14,6 +14,7 @@ package charlie.test.framework;
 import charlie.actor.Arriver;
 import charlie.actor.ClientAuthenticator;
 import charlie.actor.Courier;
+import charlie.card.Hid;
 import charlie.plugin.IUi;
 import charlie.server.GameServer;
 import charlie.server.Ticket;
@@ -103,6 +104,55 @@ public abstract class Perfect extends TestCase {
         }
 
         info("server READY !");
+    }
+
+    /**
+     * Places main and side bets with courier
+     * @param amt Main bet
+     * @param sideAmt Side bet
+     */
+    public void bet(int amt, int sideAmt) {
+        courier.bet(amt,sideAmt);
+    }
+
+    /**
+     * Places a bet.
+     * @param amt Main bet
+     */
+    public void bet(int amt) {
+        courier.bet(amt,0);
+    }
+
+    /**
+     * Requests stay.
+     * @param hid Hand id
+     */
+    public void stay(Hid hid) {
+        new Thread(() -> courier.stay(hid)).start();
+    }
+
+    /**
+     * Requests hit.
+     * @param hid Hand id
+     */
+    public void hit(Hid hid) {
+        new Thread(() -> courier.hit(hid)).start();
+    }
+
+    /**
+     * Requests double-down.
+     * @param hid Hand id
+     */
+    public void doubleDown(Hid hid) {
+        new Thread(() -> courier.dubble(hid)).start();
+    }
+
+    /**
+     * Requests split.
+     * @param hid Hand id
+     */
+    public void split(Hid hid) {
+        new Thread(() -> courier.split(hid)).start();
     }
 
     /**

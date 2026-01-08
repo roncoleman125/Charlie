@@ -39,7 +39,7 @@ public class HelloPerfectTest extends Perfect implements IUi {
         final int BET_AMT = 5;
         final int SIDE_BET_AMT = 0;
 
-        courier.bet(BET_AMT,SIDE_BET_AMT);
+        bet(BET_AMT,SIDE_BET_AMT);
         info("bet amt: "+BET_AMT+", side bet: "+SIDE_BET_AMT);
 
         ////////// All test logic at this point done by IUi implementation.
@@ -70,7 +70,7 @@ public class HelloPerfectTest extends Perfect implements IUi {
     public void play(Hid hid) {
         // When it's our turn, stand.
         if(hid.getSeat() == Seat.YOU)
-            new Thread(() -> courier.stay(you)).start();
+            stay(you);
     }
 
     /**

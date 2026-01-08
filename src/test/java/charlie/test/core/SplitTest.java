@@ -44,7 +44,7 @@ public class SplitTest extends Perfect implements IUi {
         // Start the server
         go(this);
 
-        courier.bet(BET_AMT, SIDE_BET_AMT);
+        bet(BET_AMT, SIDE_BET_AMT);
         info("bet amt: " + BET_AMT + ", side bet: " + SIDE_BET_AMT);
 
         // Wait for dealer to call end of game
@@ -128,7 +128,7 @@ public class SplitTest extends Perfect implements IUi {
 
             // Split the 9s
             info("Splitting pair of 9s...");
-            new Thread(() -> courier.split(you)).start();
+            split(you);
         }
         // Issue a stay for the second split hid
         else if (hid.equals(split2)) {

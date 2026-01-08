@@ -47,7 +47,7 @@ public class DealerBlackjackTest extends Perfect implements IUi {
         go(this);
 
         // Place bet
-        courier.bet(BET_AMT, SIDE_BET_AMT);
+        bet(BET_AMT, SIDE_BET_AMT);
         info("bet amt: " + BET_AMT + ", side bet: " + SIDE_BET_AMT);
 
         // Check for dealer blackjack

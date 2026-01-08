@@ -233,12 +233,12 @@ public class Hand implements Serializable {
      */
     @Override
     public String toString() {
-        String s = "";
+        StringBuilder s = new StringBuilder();
         for(int i=0; i < cards.size(); i++) {
-            s += "[" + cards.get(i) + "] ";
+            s.append(cards.get(i)).append(" ");
         }
         
-        return s;
+        return s.toString();
     }
 
 }

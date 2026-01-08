@@ -48,7 +48,7 @@ public class UserBlackjackTest extends Perfect implements IUi {
         go(this);
 
         // Start a game (like pressing DEAL)
-        courier.bet(BET_AMT, SIDE_BET_AMT);
+        bet(BET_AMT, SIDE_BET_AMT);
         info("bet amt: "+BET_AMT+", side bet: "+SIDE_BET_AMT);
 
         // Check BJ flag after deal flow
@@ -87,7 +87,7 @@ public class UserBlackjackTest extends Perfect implements IUi {
             return;
 
         // Sends stay message to server side
-        new Thread(() -> courier.stay(hid)).start();
+        stay(hid);
     }
 
     /**
