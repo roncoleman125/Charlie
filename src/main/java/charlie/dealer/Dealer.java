@@ -92,7 +92,8 @@ public class Dealer implements Serializable {
         shoe = ShoeFactory.getInstance(scenario);
         shoe.init();
 
-        LOG.info("shoe '"+scenario+"' instantiated successfully.");
+//        LOG.info("shoe '"+scenario+"' instantiated successfully.");;
+        LOG.info("shoe: "+shoe);
 
         loadSideRule();
     }
