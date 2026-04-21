@@ -160,7 +160,7 @@ public abstract class Perfect extends TestCase {
      */
     public void insure() { }
 
-    final Object lock = new Object();
+    final Object monitor = new Object();
     boolean trucking = true;
 
     /**
@@ -169,15 +169,19 @@ public abstract class Perfect extends TestCase {
      * @return True if got signal, false if timed out
      */
     public boolean await(long timeout) throws InterruptedException {
+        // Must be reset each time await invoked after signal
+        trucking = true;
+
         long deadline = System.currentTimeMillis() + timeout;
 
-        synchronized (lock) {
+        synchronized (monitor) {
             while (trucking) {
                 long remaining = deadline - System.currentTimeMillis();
                 if (remaining <= 0) {
                     return false;              // timed out
                 }
-                lock.wait(remaining);
+                // When notified, this statement unblocks.
+                monitor.wait(remaining);
             }
             return true;                       // condition became true
         }
@@ -187,9 +191,10 @@ public abstract class Perfect extends TestCase {
      * Signals awaiting thread(s).
      */
     public void signal() {
-        synchronized (lock) {
+        synchronized (monitor) {
             trucking = false;
-            lock.notifyAll();
+
+            monitor.notifyAll();
         }
     }
 }
